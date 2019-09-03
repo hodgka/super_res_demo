@@ -2,26 +2,26 @@
 from flask import redirect, render_template, request
 from flask import g, Blueprint, flash, url_for, session
 
-from app.services.github import GitHub
+# from app.services.github import GitHub
 
 blueprint = Blueprint('tutorial', __name__, url_prefix='/tutorial')
 
-@blueprint.route('/requesting')
-def requesting():
-    search = request.args.get('query', '')
-    if not 'access_token' in session:
-        flash('This tutorial needs an authenticated user to make the request. Please sign in with your GitHub account.', 'danger')
-        return render_template('tutorial/requesting.html')
-
-    github = GitHub(access_token=session['access_token'])
-    results1 = github.get('/user/starred')
-    results2 = github.get('/search/repositories', { 'q': search } )
-    results2 = results2.get('items', [])
-
+@blueprint.route('/super_res')
+def super_res():
+   
+    fnames = ["https://mdbootstrap.com/img/Photos/Horizontal/Nature/12-col/img%20(117).jpg",
+    "https://mdbootstrap.com/img/Photos/Horizontal/Nature/12-col/img%20(98).jpg",
+    "https://mdbootstrap.com/img/Photos/Horizontal/Nature/12-col/img%20(131).jpg",
+    "https://mdbootstrap.com/img/Photos/Horizontal/Nature/12-col/img%20(123).jpg",
+    "https://mdbootstrap.com/img/Photos/Horizontal/Nature/12-col/img%20(118).jpg",
+    "https://mdbootstrap.com/img/Photos/Horizontal/Nature/12-col/img%20(128).jpg",
+    "https://mdbootstrap.com/img/Photos/Horizontal/Nature/12-col/img%20(132).jpg",
+    "https://mdbootstrap.com/img/Photos/Horizontal/Nature/12-col/img%20(115).jpg",
+    "https://mdbootstrap.com/img/Photos/Horizontal/Nature/12-col/img%20(133).jpg",
+    ]
+        
     return render_template('tutorial/requesting.html',
-        tutorial1 = results1[:5],
-        tutorial2 = results2[:5],
-        query = search
+        items=fnames
     )
 
 @blueprint.route('/star', methods=['POST'])
