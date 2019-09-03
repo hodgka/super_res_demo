@@ -17,9 +17,31 @@
   vertical-align: text-top;
 }
 
-.top-buffer {margin-top: 20px;}
+.top-buffer {
+  margin-top: 20px;
+}
 
 .wrapper {
   display: flex;
   justify-content: center;
+}
+
+/* #myTabEx {
+  background-color: #2dbcac;
+}
+
+#myTabEx li a {
+  color: white;
+} */
+
+/* .nav-item a {
+  background-color: #2dbcac;
+} */
+
+.nav-pills > .active > a, .nav-pills > .active > a:hover {
+  background-color: red;
+}
+
+.nav-pills .nva-link.active, .nav-pills .show>.nav-link {
+  background-color: red;
 }
