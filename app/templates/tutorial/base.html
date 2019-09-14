@@ -9,13 +9,15 @@
         <h1 class="h1 mb-0">{% block title %}{% endblock %}</h1>
         <h2 class="h4 font-weight-light text-gray-light">{% block subtitle %}{% endblock %}</h2>
       </div>
-      <a class="btn btn-outline-light" href="https://developer.github.com/v3/">Check GitHub API</a>
     </div>
   </div>
 {% endblock %}
 
 {% block content %}
-  <div class="container py-5 my-5">
-    {% block container %}{% endblock %}
-  </div>
+  <p>Upload an image and the algorithm will tell you what it is!</p>
+
+  <form action="/tutorial/img_classification" method="post" enctype="multipart/form-data">
+      <input type="file" name="image" id="image">
+      <input type="submit" value="Submit">
+  </form>
 {% endblock %}
