@@ -1,3 +1,16 @@
+## Setup
+
+```
+git clone https://github.com/hodgka/super_res_demo
+cd super_res_demo
+virtualenv -p python3.6 .env
+source .env/bin/activate
+pip install -r requirements.txt
+mkdir uploads
+mkdir outputs
+```
+
+
 # Introduction
 
 This is a hackathon boilerplate for new Flask web applications created by [Major League Hacking](https://github.com/MLH). It is for hackers looking to get started quickly on a new hackathon project using the Flask microframework.

@@ -12,6 +12,12 @@ from app.settings import (ALLOWED_EXTENSIONS, CHAR_SET, IMAGE_LABELS, MODEL,
                           UPLOAD_FOLDER, graph, OUTPUT_FOLDER)
 from ml_modules import bicubic, bilinear, nearest_neighbor
 
+SR_METHODS = {
+    'bicubic': bicubic,
+    'bilinear': bilinear,
+    'nearest_neighbor': nearest_neighbor,
+    'srcnn': bilinear} 
+
 blueprint = Blueprint('demos', __name__, url_prefix='/demos')
 
 
@@ -20,6 +26,7 @@ def super_res():
     if request.method == 'GET':
         return render_template('demos/super_res.html')
     if request.method == "POST":
+        sr_method = request.form['sr_models']
         if 'image' not in request.files:
             flash("No file was uploaded.")
             return redirect(request.url)
@@ -42,27 +49,26 @@ def super_res():
                 pass
 
             if passed:
-                return redirect(url_for('demos.super_res_inference', fname=fname))
+                return redirect(url_for('demos.super_res_inference', sr_method=sr_method, fname=fname))
             else:
                 flash("An error occurred. Please try again.")
                 return redirect(request.url)
 
 
-@blueprint.route('/super_res_inference/<fname>')
-def super_res_inference(fname):
+@blueprint.route('/super_res_inference/<sr_method>/<fname>')
+def super_res_inference(sr_method, fname):
     image_url = url_for('demos.input_images', fname=fname)
     filepath = os.path.join(UPLOAD_FOLDER, fname)
     im = preprocess(filepath)
-    output = bicubic(im[0])
+
+    # TODO need to fix this to use module properly instead of hacky dict at top
+    sr_model = SR_METHODS.get(sr_method.lower())
+    output = sr_model(im)
 
     save_image(fname, output)
 
-    predictions = [0.1, 0.5, 0.3, 0.75, 0.9, 0.5, 0.1, 0.0]
-    script, div = generate_barplot(predictions)
     return render_template(
         'demos/super_res_result.html',
-        plot_script=script,
-        plot_div=div,
         image_url=image_url,
         output_url=url_for('demos.output_images', fname=fname)
     )
@@ -75,18 +81,10 @@ def serve_error(error):
 
 @blueprint.route('/images/input/<fname>', methods=["GET"])
 def input_images(fname):
-    print("INPUT IS CALLED")
     return send_file(os.path.join(UPLOAD_FOLDER, fname))
 
 @blueprint.route('/images/output/<fname>', methods=["GET"])
 def output_images(fname):
-    print("OUTPUT IS CALLED", OUTPUT_FOLDER, fname)
-    # image = Image.fromarray(output.astype(np.uint8))
-    # output_arr = io.BytesIO()
-    # image.convert('RGBA').save(output_arr, format='PNG')
-    # output_arr.seek(0, 0)
-    # out = output_arr.getvalue()
-
     return send_from_directory(OUTPUT_FOLDER, fname, as_attachment=True)
 
 

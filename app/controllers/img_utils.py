@@ -1,19 +1,3 @@
-import io
-import os
-import random
-
-import numpy as np
-from bokeh.embed import components
-from bokeh.plotting import figure
-from numpy import pi, squeeze
-from skimage.io import imread, imsave
-from skimage.transform import resize
-from werkzeug.utils import secure_filename
-
-from app.settings import (ALLOWED_EXTENSIONS, CHAR_SET, IMAGE_LABELS, MODEL,
-                          OUTPUT_FOLDER, UPLOAD_FOLDER, graph)
-
-
 def is_allowed(fname):
     allowed_ext = fname.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
     return '.' in fname and allowed_ext
@@ -37,9 +21,8 @@ def generate_barplot(predictions):
 
 def preprocess(fname):
     im = imread(fname)[:, :, :3] / 255.
-    # im = resize(im, (128, 128))
-    # im = im.reshape((-1, 128, 128, 3))
-    # im = np.expand_dims(im, 0)
+    im = resize(im, (128, 128))
+    im = im.reshape((-1, 128, 128, 3))
     return im
 
 
@@ -100,14 +83,3 @@ def make_thumbnail(filepath):
         return True
     return False
 
-
-def save_image(fname, image):
-    filepath = os.path.join(OUTPUT_FOLDER, os.path.basename(fname))
-    imsave(filepath, image)
-
-
-def save_image_in_memory(fname, output):
-    output = io.BytesIO()
-    np.savez(output, image=output)
-    output.seek(0, 0)
-    return output

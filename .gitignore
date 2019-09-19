@@ -103,5 +103,12 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-uploads/
+
 .vscode/
+uploads/
+outputs/
+
+ml_modules/*/model_*
+dataset/
+*.png
+*.jpg
