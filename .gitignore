@@ -112,3 +112,4 @@ ml_modules/*/model_*
 dataset/
 *.png
 *.jpg
+*models/
