@@ -110,6 +110,7 @@ outputs/
 
 ml_modules/*/model_*
 dataset/
+datasets/
 *.png
 *.jpg
 *models/

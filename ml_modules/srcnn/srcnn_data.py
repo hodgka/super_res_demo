@@ -2,7 +2,9 @@ from os.path import exists, join, basename
 from os import makedirs, remove
 from six.moves import urllib
 import tarfile
-from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
+# from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
+import torch
+from torchvision import transforms
 
 from srcnn_data_utils import DatasetFromFolder
 
@@ -36,20 +38,20 @@ def calculate_valid_crop_size(crop_size, upscale_factor):
 
 
 def input_transform(crop_size, upscale_factor):
-    return Compose([
-        TenCrop(size),
-        Lambda(lambda crops: torch.stack([ToTensor()(crop) for crop in crops])),
+    return transforms.Compose([
+        transforms.TenCrop(crop_size),
+        transforms.Lambda(lambda crops: torch.stack([transforms.ToTensor()(crop) for crop in crops])),
         # CenterCrop(crop_size),
         # Resize(crop_size),
         #Resize(crop_size // upscale_factor),
-        ToTensor(),
+        # transforms.ToTensor(),
     ])
 
 
 def target_transform(crop_size):
-    return Compose([
-        CenterCrop(crop_size),
-        ToTensor(),
+    return transforms.Compose([
+        transforms.CenterCrop(crop_size),
+        transforms.ToTensor(),
     ])
 
 
@@ -74,3 +76,10 @@ def get_test_set(upscale_factor):
     return DatasetFromFolder(test_dir,
                              input_transform=input_transform(crop_size, upscale_factor),
                              target_transform=target_transform(crop_size))
+
+
+if __name__ == '__main__':
+    tr = get_training_set(2)
+    for i in range(5):
+        image, target = tr[i]
+        print(image.size(), target.size())

@@ -10,7 +10,7 @@ def is_image_file(filename):
 
 
 def load_img(filepath):
-    img = Image.open(filepath)#.convert('YCbCr')
+    img = Image.open(filepath)  # .convert('YCbCr')
     return img
 
 
@@ -24,9 +24,9 @@ class DatasetFromFolder(data.Dataset):
 
     def __getitem__(self, index):
         input = load_img(self.image_filenames[index])
-        target = input.copy()#.convert('YCbCr')
+        target = input.copy()  # .convert('YCbCr')
         if self.input_transform:
-            input = input.filter(ImageFilter.GaussianBlur(2))#.convert('YCbCr')
+            input = input.filter(ImageFilter.GaussianBlur(2))  # .convert('YCbCr')
 
             input = self.input_transform(input)
         if self.target_transform:
@@ -36,3 +36,8 @@ class DatasetFromFolder(data.Dataset):
 
     def __len__(self):
         return len(self.image_filenames)
+
+
+class RandomCrop:
+    def __init__(self, crop_size):
+        self.size = crop_size
