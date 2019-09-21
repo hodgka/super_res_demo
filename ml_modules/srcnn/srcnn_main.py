@@ -15,6 +15,7 @@ parser.add_argument('--batch_size', type=int, default=64, help='training batch s
 parser.add_argument('--test_batch_size', type=int, default=10, help='testing batch size')
 parser.add_argument('--epochs', type=int, default=150, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.01')
+parser.add_argument('--momentum', type=float, default=0.9, help='Momentum. Default=0.9')
 parser.add_argument('--cuda', action='store_true', help='use cuda?')
 parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
 parser.add_argument('--seed', type=int, default=123, help='random seed to use. Default=123')
@@ -47,7 +48,21 @@ if args.cuda:
 srcnn = srcnn.to(device)
 criterion = criterion.to(device)
 
-optimizer = optim.Adam(srcnn.parameters(),lr=args.lr)
+
+parameters = [
+        conv1_rgb
+        conv1_y
+        conv2
+        {"params": srcnn.conv1_rgb.parameters(), "lr": args.lr},
+        {"params": model.conv1_y.parameters(), "lr": args.lr},
+        {"params": model.conv2.parameters(), "lr": args.lr},
+        {"params": model.conv3.parameters(), "lr": 0.1*args.lr},
+    ]
+optimizer = {
+    'adam': optim.Adam(srcnn.parameters(), lr=args.lr),
+    'sgd': optim.SGD(srcnn.parameters(), lr=args.lr, momentum=args.momentum)
+    }
+# optimizer = optim.Adam(srcnn.parameters(),lr=args.lr)
 
 
 def train(epoch):
